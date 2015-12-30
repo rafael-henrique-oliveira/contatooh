@@ -1,35 +1,41 @@
 language: node_js
-
 node_js:
-  - 4.2.1
-  
+- 4.2.1
 notifications:
-  - rafaelhenrique.oliveira7@gmail.com
-
+- rafaelhenrique.oliveira7@gmail.com
 env:
   global:
-    - NODE_ENV: test
-
+  - NODE_ENV: test
 addons:
-    sauce_connect: true
-
+  sauce_connect: true
 services:
-    - mongodb
-
+- mongodb
 before_install:
-  - npm install -g bower
-  - npm install -g grunt-cli
-  - npm install -g karma-cli
-  - npm install -g protractor
-  - webdriver-manager update
-  - bower install
-
+- npm install -g bower
+- npm install -g grunt-cli
+- npm install -g karma-cli
+- npm install -g protractor
+- webdriver-manager update
+- bower install
 before_script:
-  - node test/data.js
-  - grunt
-  - cd dist
-
+- node test/data.js
+- grunt minifica
+before_deploy:
+- git config --global user.email "travis@travis-ci.com"
+- git config --global user.name "Travis CI"
+- git checkout $TRAVIS_BRANCH
+- git add --all
+- git commit -am "Travis commit"
 script:
-  - karma start config/karma.config.js --single-run --browsers PhantomJS
-  - node server &
-  - protractor config/protractor.js
+- karma start config/karma.config.js --single-run --browsers PhantomJS
+- node server &
+- protractor config/protractor.js
+deploy:
+  provider: openshift
+  user: rafaelhenrique.oliveira7@gmail.com
+  password:
+    secure: C50V6KMwrRLGWuZyROMauOpwOIRuV9jgNRx1y4BewvjUHu0UOJVkkCq3qMAIbIfwXqaMHXMGZI2AnnIi7ygmP38846fqTgoF/MuTaSgV+UP94jC733d5eCIJ7cc9oCY5QNKR1TMONmFbNZcDsPo4ONU1IJ6x/sxR5WUANeVnQWjOwUNdOo16uaqmAPWBxe6bYNHlAKI8zDEo3h/EP6xYZXY7ki5K4wTQQ9we/EaDmevYf7mDtG5/iP3fD0k17o37ZOCFTYuVVvGqEfj+v8OOZ/F9YFWkIqEV8pcxYnRi7DDZiDAuvWmdGwYwgHQpaDsODqNusgaJAEezse6bavlrxwFGutsvHOim7hfWeny68aOADIxYa9Sk4l9muX6/eNZGkT+AzEX7evhRymCRtKeVMnJnY3PZLqbBmwGVv70O0mQOTB0gQo6g5ipKZgDtaER3c2wT0T3DtH+QHMn/oeXcNI09GZ2g6RWDnCMZ7OOcqhKxoG74UoSXPrkn4bPnJRM80aaF/lVtqvK8Du116oCdC+IEfJIuhQvMLB857u8A13csuramRRnDl9jyuETmIfTVkZQIQUWlaOFTe+PkvdYBgOgce0VJMSk1LxcgV5TsA9HIXEfFc3zSK87BW0tUsgb9moGlC/pgsnvPNrMM4GXCjz00cpY8ATO/q+vI4qUUH5o=
+  app: contatooh
+  domain: appcontatooh
+  on:
+    repo: rafael-henrique-oliveira/contatooh
